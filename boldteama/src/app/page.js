@@ -11,7 +11,7 @@ export default function Home() {
   const generateImage = async () => {
     setLoading(true);
     try {
-      const resp = await fetch("/api/image", {
+      const resp = await fetch("/api/openai", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

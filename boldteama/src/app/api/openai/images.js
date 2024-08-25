@@ -12,7 +12,7 @@ export async function POST(request) {
         n: 6,
         size: "1024x1024",
     });
-
+    console.log('API response:', response.data);
     const image_url = response.data[0].url;
     return new Response(JSON.stringify({ image_url }));
 }
