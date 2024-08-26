@@ -77,7 +77,7 @@ export async function POST(request) {
                 const summaryResponse = await openai.chat.completions.create({
                     model: "gpt-3.5-turbo",
                     messages: [
-                        { role: "system", content: "Summarize the following description of the image into a product title that can be used on a webpage." },
+                        { role: "system", content: "Summarize the following description of the image into a short product title that can be used on a webpage." },
                         { role: "user", content: image.url }
                     ]
                 });
