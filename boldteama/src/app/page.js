@@ -24,7 +24,7 @@ export default function Home() {
       const data = await resp.json();
       console.log(data);
 
-      setRenderedImage(data.data);
+      setRenderedImage(data.result);
       // setRenderedImage(data);
     } catch (error) {
       console.log(error.message);
@@ -90,7 +90,7 @@ export default function Home() {
             </div>
           )}
 
-          {renderedImage.map((image) => {
+          {renderedImage.map((image, index) => {
             return <img key={image.url} src={image.url} />;
           })}
         </div>

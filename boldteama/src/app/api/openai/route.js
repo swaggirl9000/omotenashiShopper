@@ -1,22 +1,22 @@
-import OpenAI from "openai";
+// import OpenAI from "openai";
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+// const openai = new OpenAI({
+//     apiKey: process.env.OPENAI_API_KEY,
+// });
 
-export async function POST(request) {
-    const { prompt } = await request.json();
-    const response = await openai.images.generate({
-        model: "dall-e-2",
-        prompt: prompt || "a frog riding a bike", 
-        n: 6,
-        size: "512x512",
-    });
+// export async function POST(request) {
+//     const { prompt } = await request.json();
+//     const response = await openai.images.generate({
+//         model: "dall-e-2",
+//         prompt: prompt || "a frog riding a bike", 
+//         n: 6,
+//         size: "512x512",
+//     });
 
-    const image_urls = response.data.map(image => ({ url: image.url }));
+//     const image_urls = response.data.map(image => ({ url: image.url }));
 
-    return new Response(JSON.stringify({ data: image_urls }));
-}
+//     return new Response(JSON.stringify({ data: image_urls }));
+// }
 
 //with description
 // import OpenAI from "openai";
@@ -52,42 +52,49 @@ export async function POST(request) {
 //     }
 // }
 
-// import OpenAI from "openai";
+import OpenAI from "openai";
 
-// const openai = new OpenAI({
-//     apiKey: process.env.OPENAI_API_KEY,
-// });
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+});
 
-// export async function POST(request) {
-//     try {
-//         const { prompt } = await request.json();
-//         const response = await openai.images.generate({
-//             model: "dall-e-2",
-//             prompt: prompt, 
-//             n: 6,
-//             size: "512x512",
-//         });
+export async function POST(request) {
+    try {
+        const { prompt } = await request.json();
+        const response = await openai.images.generate({
+            model: "dall-e-2",
+            prompt: prompt,
+            n: 6,
+            size: "512x512",
+        });
 
-//         const image_urls = response.data.map(image => ({ url: image.url }));
-//         if (image_urls.length === 0) throw new Error("No image URLs found");
+        const image_urls = response.data.map(image => ({ url: image.url }));
+        if (image_urls.length === 0) throw new Error("No image URLs found");
 
-//        // generate a summary for each image description
-//         const summaries = await Promise.all(
-//             response.data.map(async (image) => {
-//                 const summaryResponse = await openai.chat.completions.create({
-//                     model: "gpt-3.5-turbo",
-//                     messages: [
-//                         { role: "system", content: "Summarize the following description of the image into a product title that can be used on a webpage." },
-//                         { role: "user", content: image.description } 
-//                     ]
-//                 });
-//                 return { title: summaryResponse.choices[0].message.content };
-//             })
-//         );
-//         console.log(summaries)
-//         return new Response(JSON.stringify({ image_urls, summaries }), { status: 200 });
-//     } catch (error) {
-//         return new Response(JSON.stringify({ error: error.message }), { status: 500 });
-//     }
-// }
+        // generate a summary for each image description
+        const summaries = await Promise.all(
+            response.data.map(async (image) => {
+                const summaryResponse = await openai.chat.completions.create({
+                    model: "gpt-3.5-turbo",
+                    messages: [
+                        { role: "system", content: "Summarize the following description of the image into a product title that can be used on a webpage." },
+                        { role: "user", content: image.url }
+                    ]
+                });
+                return summaryResponse.choices[0].message.content.trim();
+            })
+        );
+
+        // combine image URLs and summaries into a single response
+        const result = image_urls.map((image, index) => ({
+            url: image.url,
+            summary: summaries[index],
+        }));
+
+        return new Response(JSON.stringify({ result }), { status: 200 });
+    } catch (error) {
+        return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    }
+}
+
 
