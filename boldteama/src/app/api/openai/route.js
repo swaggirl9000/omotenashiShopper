@@ -77,7 +77,7 @@ export async function POST(request) {
                 const summaryResponse = await openai.chat.completions.create({
                     model: "gpt-3.5-turbo",
                     messages: [
-                        { role: "system", content: "Write a short product title describing the bathing suit in the image the same way an ecommerce site would." },
+                        { role: "system", content: "Write a short product title describing the anime body pillow in the image the same way an ecommerce site would." },
                         { role: "user", content: image.url }
                     ]
                 });
